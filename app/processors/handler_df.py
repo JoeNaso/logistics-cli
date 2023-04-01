@@ -1,34 +1,16 @@
 """
 Simple utilities for processing flight dataset
 """
-import functools
 import os
-import time
 
 import pandas as pd
 
-from constants import DATA_DIR, ROOT_DIR
+from utils import calc_time, get_data_filepath
 
-
-def calc_time(func):
-    """
-    Decorator to length of processing run times
-    """
-
-    @functools.wraps(func)
-    def time_wrapper(*args, **kwargs):
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        end = time.perf_counter()
-        minutes, seconds = divmod(end - start, 60)
-        print(f"{func.__qualname__}: {minutes} mins, {round(seconds)} seconds")
-        return result
-
-    return time_wrapper
 
 
 def get_flight_df() -> pd.DataFrame:
-    target = os.path.join(os.sep, ROOT_DIR, DATA_DIR, "input_data_airport_flights.csv")
+    target = get_data_filepath()
     return pd.read_csv(target)
 
 

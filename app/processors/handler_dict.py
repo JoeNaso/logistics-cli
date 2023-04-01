@@ -1,9 +1,9 @@
 import csv
 import os
 
-from typing import Dict
+from typing import Dict, List
 
-from constants import ROOT_DIR, DATA_DIR
+from utils import calc_time, get_data_filepath
 
 
 def get_total_seats(row: Dict) -> int:
@@ -11,13 +11,31 @@ def get_total_seats(row: Dict) -> int:
     return sum(int(v) for k, v in row.items() if k in seat_classes and v != '')
 
 
+def dict_to_sorted_list(report: Dict) -> List:
+    """
+    Given a dictionary with nested dictionaries, unpack into a sorted list of dicts
+    Sorting criteria uses the "total" seat value (outbound + inbound)
+    This is not strictly necessary, but makes the final output on the CLI friendlier
+    """
+    inter = []
+    for name in report:
+        data = report[name]
+        data['IATA Code'] = name
+        inter.append(data)
+
+    # Add inbound/ outbound seats for simple sorting rule
+    sort_key = lambda x: x.get('total_seats_outbound', 0) + x.get('total_seats_inbound', 0)
+    return sorted(inter, key=sort_key, reverse=True)
+
+
+@calc_time
 def aggregate_dict() -> Dict:
     """
     Aggregate inbound and outbound seat data by airport in Dictionary
     """
     report = {}
-
-    target = os.path.join(os.sep, ROOT_DIR, DATA_DIR, "input_data_airport_flights.csv")
+    
+    target = get_data_filepath()
     with open(target, 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -49,5 +67,5 @@ def aggregate_dict() -> Dict:
                     dest['total_seats_inbound'] = get_total_seats(row)
                 else:
                     dest['total_seats_inbound'] += get_total_seats(row)
-    return report
-            
+
+    return dict_to_sorted_list(report)

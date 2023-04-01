@@ -1,2 +1,4 @@
 click
+diagrams
+numpy
 pandas
