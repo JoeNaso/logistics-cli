@@ -2,3 +2,4 @@ click
 diagrams
 numpy
 pandas
+scipy
