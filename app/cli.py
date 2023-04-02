@@ -16,31 +16,38 @@ def echo(val):
 
 @click.command()
 @click.option(
+    '-a',
+    '--airport',
+    type=str,
+    help='Provide a 3-letter airport code to filter results to a single airport'
+)
+@click.option(
     '-s',
     '--structure', 
     default='df', 
     type=click.Choice(['df', 'dict', 'matrix', 'all'], case_sensitive=False), 
-    help='Aggregate flight legs using data structure specified. If `all`, utility will return each option sequentially without limits')
-@click.option('--num', default=10, type=int, help='Specify number of row to print to console, sorted descending')
-@click.option('--matrix-headers', default=True, type=bool, help='Boolean flag to include column/ row headers in matrix. Only applies to matrix')
-def flight_legs(structure, num):
+    help='Aggregate flight legs using data structure specified. If `all`, utility will return each option sequentially without limits'
+)
+@click.option('--num', default=10, type=int, help='Specify number of sorted rows to print to console. DF only')
+def flight_legs(airport, structure, num):
     handler = {
         'df': processors.aggregate_df, 
         'dict': processors.aggregate_dict,
         'matrix': processors.process_matrix
     }
+    airport = airport.upper() if airport else None
     if structure == 'all':
         for key in handler:
             click.echo('-' * 10)
             click.echo(key)
-            click.echo(handler.get(key)())
+            click.echo(handler.get(key)(airport))
         return 
 
     func = handler.get(structure)
     if structure == 'df':
-        click.echo(func().head(num))
+        click.echo(func(airport).head(num))
     else:
-        click.echo(func()[:num])
+        click.echo(func(airport))
 
 
 @click.option('-i', '--index', type=int, help='Provided an index, lookup the airport name from the matrix')

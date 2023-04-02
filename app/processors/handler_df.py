@@ -2,16 +2,11 @@
 Simple utilities for processing flight dataset
 """
 import os
+import sys
 
 import pandas as pd
 
-from utils import calc_time, get_data_filepath
-
-
-
-def get_flight_df() -> pd.DataFrame:
-    target = get_data_filepath()
-    return pd.read_csv(target)
+from utils import calc_time, get_flight_df
 
 
 def merge_and_clean(
@@ -32,11 +27,11 @@ def merge_and_clean(
 
 
 @calc_time
-def aggregate_df() -> pd.DataFrame:
+def aggregate_df(airport) -> pd.DataFrame:
     """
     Aggregate inbound and outbound seat data by airport in DataFrame
     """
-    flights = get_flight_df()
+    flights = get_flight_df(airport)
     # make a clean "total seats" column since data is inconsistent
     flights["total_seats"] = flights[
         ["Fclass Seats", "Bclass Seats", "Eclass Seats"]

@@ -3,14 +3,13 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-from scipy.spare import coo_matrix
+from scipy.sparse import coo_matrix
 
-from utils import calc_time, get_data_filepath
+from utils import calc_time, get_flight_df
 
 
-def get_sparse_matrix_data():
-    target = get_data_filepath()
-    df = pd.read_csv(target)
+def get_sparse_matrix_data(airport):
+    df = get_flight_df(airport=airport)
     seats = ['Fclass Seats', 'Bclass Seats', 'Eclass Seats']
     df['total_seats'] = df[seats].sum(axis=1)
     return df
@@ -38,13 +37,12 @@ def get_airport_encodings(
     return origin_series.map(seen_origin), dest_series.map(seen_dest)
     
 
-def create_matrix():
+def create_matrix(data: pd.DataFrame) -> coo_matrix:
     """
     Create a sparse matrix, with Origin as rows and Destination as columns
     Coordinates of matrix correspond to the Origin/ Destination pair
     Since airports are string values, 3-letter codes are transposed to a numeric value 
     """
-    data = get_sparse_matrix_data()
     origin = data['Origin IATA']
     dest = data['Destination IATA']
     encoded_origin, encoded_dest = get_airport_encodings(origin, dest)
@@ -56,7 +54,7 @@ def create_matrix():
     return sparse
 
 
-def process_matrix(airport_code) -> np.ndarray:
+def process_matrix(airport) -> np.ndarray:
     """
     Given an airport code, return the array with to total seats for each corresponding destiation
     Example:
@@ -64,9 +62,10 @@ def process_matrix(airport_code) -> np.ndarray:
     Each sublist represents seats leaving JFK and landing at specific destination.
     To find the corresponding destination airport, use `index_to_destination_airport`
     """
-    matrix = create_matrix()
-    origin, _ = get_airport_encodings()
-    encoding = origin.get(airport_code)
+    data = get_sparse_matrix_data(airport=airport)
+    matrix = create_matrix(data)
+    origin, _ = get_airport_encodings(data['Origin IATA'], data['Destination IATA'])
+    encoding = origin.get(airport)
     return matrix.getrow(encoding)
 
 

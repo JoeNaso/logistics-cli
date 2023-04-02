@@ -4,7 +4,10 @@ General use for all handlers
 import functools
 import os
 import time
+import sys
 from pathlib import Path
+
+import pandas as pd
 
 DATA_DIR = "data"
 ROOT_DIR = Path(__file__).absolute().parent.parent
@@ -28,3 +31,19 @@ def calc_time(func):
 
 def get_data_filepath() -> str:
     return os.path.join(os.sep, ROOT_DIR, DATA_DIR, "input_data_airport_flights.csv")
+
+def get_flight_df(airport=None) -> pd.DataFrame:
+    target = get_data_filepath()
+    df = pd.read_csv(target)
+    if airport is None:
+        return df
+    
+    if (airport not in df['Destination IATA'] and airport not in df['Origin IATA']):
+        sys.stdout.write(f'Airport code provided not found in data. Provided code: {airport}')
+        sys.exit(1)
+    
+    df = df[(df['Origin IATA'] == airport | df['Destination IATA'] == airport)]
+    if df.empty:
+        sys.stdout.write(f'Airport code provided not found in data. Provided code: {airport}')
+        sys.exit(1)
+    return df

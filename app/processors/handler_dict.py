@@ -29,7 +29,7 @@ def dict_to_sorted_list(report: Dict) -> List:
 
 
 @calc_time
-def aggregate_dict() -> Dict:
+def aggregate_dict(airport) -> Dict:
     """
     Aggregate inbound and outbound seat data by airport in Dictionary
     """
@@ -41,6 +41,9 @@ def aggregate_dict() -> Dict:
         for row in reader:
             origin = row.get('Origin IATA')
             destination = row.get('Destination IATA')
+            # If neither match, skip
+            if airport is not None and not(origin == airport or destination == airport):
+                continue
             # Set origin key in report dict if not present
             if not origin in report:
                 report[origin] = {
@@ -67,5 +70,8 @@ def aggregate_dict() -> Dict:
                     dest['total_seats_inbound'] = get_total_seats(row)
                 else:
                     dest['total_seats_inbound'] += get_total_seats(row)
+        
+    if airport is not None:
+        return report.get(airport, {})
 
     return dict_to_sorted_list(report)
