@@ -60,7 +60,7 @@ def process_matrix(airport) -> np.ndarray:
     """
     Given an airport code, return the array with to total seats for each corresponding destiation
     Example:
-        process_matrix(JFK') -> [[123, 456, 789]]
+        process_matrix('JFK') -> [[123, 456, 789]]
     Each sublist represents seats leaving JFK and landing at specific destination.
     To find the corresponding destination airport, use `index_to_destination_airport`
     """

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-ROW_COUNT = 1000000000
+ROW_COUNT = 1000000
 ROOT_DIR = Path(__file__).absolute().parent
 
 

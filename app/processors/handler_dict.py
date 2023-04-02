@@ -34,7 +34,7 @@ def aggregate_dict(airport) -> Dict:
     Aggregate inbound and outbound seat data by airport in Dictionary
     """
     report = {}
-    
+
     target = get_data_filepath()
     with open(target, 'r') as f:
         reader = csv.DictReader(f)
@@ -47,6 +47,7 @@ def aggregate_dict(airport) -> Dict:
             # Set origin key in report dict if not present
             if not origin in report:
                 report[origin] = {
+                    'airport': airport,
                     'total_seats_outbound': get_total_seats(row)
                 }
             else:
@@ -60,6 +61,7 @@ def aggregate_dict(airport) -> Dict:
             # Set destination key in report dict if not already present
             if not destination in report:
                 report[destination] = {
+                    'airport': airport,
                     'total_seats_inbound': get_total_seats(row)
                 }
             else:
