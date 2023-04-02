@@ -34,8 +34,8 @@ def get_airport_encodings(
         if val not in seen_dest:
             seen_dest[val] = j
             j += 1
-    return origin_series.map(seen_origin), dest_series.map(seen_dest)
-    
+    return seen_origin, seen_dest
+
 
 def create_matrix(data: pd.DataFrame) -> coo_matrix:
     """
@@ -46,10 +46,12 @@ def create_matrix(data: pd.DataFrame) -> coo_matrix:
     origin = data['Origin IATA']
     dest = data['Destination IATA']
     encoded_origin, encoded_dest = get_airport_encodings(origin, dest)
+    clean_origin = origin.map(encoded_origin)
+    clean_dest = dest.map(encoded_dest)
     number_origins = len(origin.unique())
     number_dests = len(dest.unique())
     sparse = coo_matrix((data['total_seats'], 
-                         (encoded_origin, encoded_dest)), 
+                         (clean_origin, clean_dest)), 
                          shape=(number_origins, number_dests))
     return sparse
 
@@ -66,6 +68,7 @@ def process_matrix(airport) -> np.ndarray:
     matrix = create_matrix(data)
     origin, _ = get_airport_encodings(data['Origin IATA'], data['Destination IATA'])
     encoding = origin.get(airport)
+    # return matrix.getrow(encoding)
     return matrix.getrow(encoding)
 
 
@@ -73,6 +76,8 @@ def index_to_destination_airport(idx: int) -> str:
     """
     Given an index, find the destination airport code
     """
-    _, dest = get_airport_encodings()
+    data = get_sparse_matrix_data(airport=None)
+    matrix = create_matrix(data)
+    _, dest = get_airport_encodings(data['Origin IATA'], data['Destination IATA'])
     swapped = {v:k for k, v in dest.items()}
     return swapped.get(idx, None)

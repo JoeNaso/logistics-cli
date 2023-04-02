@@ -49,8 +49,8 @@ def flight_legs(airport, structure, num):
     else:
         click.echo(func(airport))
 
-
-@click.option('-i', '--index', type=int, help='Provided an index, lookup the airport name from the matrix')
+@click.command()
+@click.option('-i', '--idx', type=int, help='Provided an index, lookup the airport name from the matrix')
 def airport_from_index(idx):
     code = processors.index_to_destination_airport(idx)
     if not code:
@@ -63,5 +63,6 @@ if __name__ == '__main__':
 
     cli.add_command(echo)
     cli.add_command(flight_legs)
+    cli.add_command(airport_from_index)
 
     cli()
