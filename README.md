@@ -7,10 +7,10 @@ To Run:
 4. From the CLI, run `python cli.py --help` for a list of commands
 
 #### Commands
-`flights-legs`
+`flight-legs`
 * Given a three-letter airport code, calculate the total inbound and outbound seats for that airport
 * Options include: `--airport`/ `-a`, `--structure` / `-s` 
-* `--strucutre` flag is used for the output format
+* `--structure` flag is used for the output format
   * `df` - DataFrame 
   * `dict` -> Dict 
   * `matrix` -> Matrix 
