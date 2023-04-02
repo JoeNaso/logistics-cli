@@ -35,7 +35,7 @@ def flight_legs(airport, structure, num):
         'dict': processors.aggregate_dict,
         'matrix': processors.process_matrix
     }
-    airport = airport.upper() if airport else None
+    airport = airport.upper().strip() if airport else None
     if structure == 'all':
         for key in handler:
             click.echo('-' * 10)

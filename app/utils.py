@@ -37,12 +37,14 @@ def get_flight_df(airport=None) -> pd.DataFrame:
     df = pd.read_csv(target)
     if airport is None:
         return df
-    
-    if (airport not in df['Destination IATA'] and airport not in df['Origin IATA']):
+    # Check that the airport exists in the data
+    missing_from_dest = airport not in df['Destination IATA'].values
+    missing_from_origin = airport not in df['Origin IATA'].values
+    if (missing_from_dest and missing_from_origin):
         sys.stdout.write(f'Airport code provided not found in data. Provided code: {airport}')
         sys.exit(1)
     
-    df = df[(df['Origin IATA'] == airport | df['Destination IATA'] == airport)]
+    df = df[(df['Origin IATA'] == airport) | (df['Destination IATA'] == airport)]
     if df.empty:
         sys.stdout.write(f'Airport code provided not found in data. Provided code: {airport}')
         sys.exit(1)

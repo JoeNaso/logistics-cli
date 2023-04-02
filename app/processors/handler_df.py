@@ -32,7 +32,6 @@ def aggregate_df(airport) -> pd.DataFrame:
     Aggregate inbound and outbound seat data by airport in DataFrame
     """
     flights = get_flight_df(airport)
-    # make a clean "total seats" column since data is inconsistent
     flights["total_seats"] = flights[
         ["Fclass Seats", "Bclass Seats", "Eclass Seats"]
     ].sum(axis=1)
@@ -58,6 +57,6 @@ def aggregate_df(airport) -> pd.DataFrame:
     airports = pd.DataFrame(
         pd.unique(flights[["Origin IATA", "Destination IATA"]].values.ravel("K"))
     ).rename(columns={0: "IATA Code"})
-
+    airports = airports[airports['IATA Code'] == airport]
     final = merge_and_clean(airports, inbound, outbound)
     return final
