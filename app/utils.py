@@ -15,7 +15,7 @@ ROOT_DIR = Path(__file__).absolute().parent.parent
 
 def calc_time(func):
     """
-    Decorator to length of processing run times
+    Decorator to calc length of run times
     """
 
     @functools.wraps(func)
@@ -33,6 +33,9 @@ def get_data_filepath() -> str:
     return os.path.join(os.sep, ROOT_DIR, DATA_DIR, "input_data_airport_flights.csv")
 
 def get_flight_df(airport=None) -> pd.DataFrame:
+    """
+    Get working dataset of flight data as dataframe
+    """
     target = get_data_filepath()
     df = pd.read_csv(target)
     if airport is None:
