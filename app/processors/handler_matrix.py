@@ -68,7 +68,6 @@ def process_matrix(airport) -> np.ndarray:
     matrix = create_matrix(data)
     origin, _ = get_airport_encodings(data['Origin IATA'], data['Destination IATA'])
     encoding = origin.get(airport)
-    # return matrix.getrow(encoding)
     return matrix.getrow(encoding)
 
 
