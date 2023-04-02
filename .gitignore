@@ -1,7 +1,6 @@
 .idea
 .spyproject
 config.json
-**.csv
 **__pycache__
 .git
 analytics_pipeline/
